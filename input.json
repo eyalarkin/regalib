@@ -1,0 +1,7 @@
+{
+  "ruleLevel": ["warning"],
+  "precision": [],
+  "location": [],
+  "ruleIDs": [],
+  "ignore": ["ocaml.lang.portability.crlf-support.broken-input-line"]
+}
