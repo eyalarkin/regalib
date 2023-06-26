@@ -25,19 +25,19 @@ default format := false
 
 
 
-filtered_runs = { id |
+filtered_runs (ids, levels, precisions, ignore) = { id |
    format;
    rule = data.runs[0].tool.driver.rules[_];
-   id_check(rule.id, input.ruleIDs)
+   id_check(rule.id, ids)
    # rule.id in input.ruleIDs
-   level_check(rule.defaultConfiguration.level, input.ruleLevel);
+   level_check(rule.defaultConfiguration.level, levels);
    # rule.defaultConfiguration.level in input.ruleLevel;
-   precision_check(rule.properties.precision, input.precision);
+   precision_check(rule.properties.precision, precisions);
    # rule.properties.precision in input.precision;
-   ignore_check(rule.id, input.ignore);
+   ignore_check(rule.id, ignore);
    # not (rule.id in input.ignore);
    id = rule.id
-} if { not (input.ignore == "all") } else := []
+} if { not (ignore == "all") } else := []
 
 level_check (level, filters) {
    count(filters) == 0
@@ -81,9 +81,10 @@ format {
 
 # test := data.runs[0].tool.driver.rules[1].defaultConfiguration.level
 
-synopsis := { summary |
+filter_list (ids, levels, precisions, ignore) = { summary |
    result = data.runs[0].results[_]
-   result.ruleId in filtered_runs
+   lst := filtered_runs(ids, levels, precisions, ignore)
+   result.ruleId in lst
    summary = {
       "------------------": "------------------",
       "ruleID": result.ruleId,
@@ -91,4 +92,4 @@ synopsis := { summary |
       "region": result.locations[0].physicalLocation.region,
       "message": result.message.text,
    }
-} if { count(filtered_runs) > 0 } else := "no problems found!"
+} if { count(filtered_runs(ids, levels, precisions, ignore)) > 0 } else := "no problems found!"
