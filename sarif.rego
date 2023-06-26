@@ -27,14 +27,14 @@ default format := false
 
 filtered_runs (ids, levels, precisions, ignore) = { id |
    format;
-   rule = data.runs[0].tool.driver.rules[_];
+   rule = data.runs[0].tool.driver.rules[_]
    id_check(rule.id, ids)
    # rule.id in input.ruleIDs
-   level_check(rule.defaultConfiguration.level, levels);
+   level_check(rule.defaultConfiguration.level, levels)
    # rule.defaultConfiguration.level in input.ruleLevel;
-   precision_check(rule.properties.precision, precisions);
+   precision_check(rule.properties.precision, precisions)
    # rule.properties.precision in input.precision;
-   ignore_check(rule.id, ignore);
+   ignore_check(rule.id, ignore)
    # not (rule.id in input.ignore);
    id = rule.id
 } if { not (ignore == "all") } else := []
@@ -78,8 +78,6 @@ format {
    input.ruleIDs
    input.ignore
 }
-
-# test := data.runs[0].tool.driver.rules[1].defaultConfiguration.level
 
 filter_list (ids, levels, precisions, ignore) = { summary |
    result = data.runs[0].results[_]
