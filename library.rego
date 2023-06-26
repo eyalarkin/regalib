@@ -2,7 +2,8 @@
 
 package sarif
 
-import future.keywords.if
+default pass_no_filters := false
+default pass := false
 
 # returns the total number of rules used for evaluation in the sarif
 rule_count = n {
@@ -59,3 +60,12 @@ results_by_rule_id (rule_id) = result {
    result := filter_list(rule_id, [], [], [])
 }
 
+# determines whether the SAST results pass with no user-specified filters
+pass_no_filters {
+   filter_list([], [], [], []) == "no problems found!"
+}
+
+# determines whether the SAST results pass using the 'input.json' specified filters
+pass {
+   synopsis == "no problems found!"
+}
