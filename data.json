@@ -256,7 +256,7 @@
                   "endColumn": 150,
                   "endLine": 60,
                   "snippet": {
-                    "text": "| h :: t -> if odd qc then (h :: help t (if h == '\\\"' then qc + 1 else qc))  else (if (whitespace h) then (help t qc) else (h :: help t (if h == '\\\"' then qc + 1 else qc)))"
+                    "text": "| h :: t -> if odd qc then (h :: help t (if h == '\\\"' then qc + 1 else qc))  else (if (whitespace h) then (help t qc) else (h :: help t (if h == '\\\"' then qc + 1 else qc)) )"
                   },
                   "startColumn": 141,
                   "startLine": 60
