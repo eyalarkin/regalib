@@ -1,7 +1,6 @@
 {
   "ruleLevel": ["warning"],
   "precision": [],
-  "location": [],
   "ruleIDs": [],
-  "ignore": "all"
+  "ignore": []
 }
