@@ -74,7 +74,6 @@ ignore_check (ignore, filters) {
 format {
    input.ruleLevel
    input.precision
-   input.location
    input.ruleIDs
    input.ignore
 }
