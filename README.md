@@ -7,6 +7,8 @@ data.json and input.json are examples of SAST output files formatted as SARIF (f
 ---
 ### How to Evaluate Each Policy
 
+Put the `library.rego` and `input.json` file into the same directory that your SAST output file is in
+
 Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<policy_name>"`
 
 - Put your input criteria into a JSON formatted file as such:
@@ -63,7 +65,7 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
    - for example: `rules_evaluated_count == 16` if there were 16 total findings reported by the SAST tool
 
 #### `rule_list`
-- Type: `Array`
+- Type: `array`
 - Returns an array of JSON objects where each has the id of a rule, and a description of it
    - for example: an entry in that array could look like:
 
@@ -73,3 +75,40 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
       "id": "ocaml.lang.correctness.physical-vs-structural.physical-equal"
    }
    ```
+
+#### `status_count(level)`
+- Type: `int`
+- Returns the number of results in the filtered list of findings with the finding level `level`
+   - for example: `status_count("very-high")` returns the number of findings with the level `"very-high"`
+
+#### `filter_count`
+- Type: `int`
+- Returns the number of rules complying to the input criteria
+
+#### `synopsis`
+- Type: `array`
+- Returns a synopsis of the findings, after the filter is applied
+- Each entry is a JSON object as such:
+
+```
+        {
+          "------------------": "------------------",
+          "file": "_build/default/src/lexer.ml",
+          "message": "You probably want the structural equality operator =",
+          "region": {
+            "endColumn": 54,
+            "endLine": 60,
+            "snippet": {
+              "text": "| h :: t -> if odd qc then (h :: help t (if h == '\\\"' then qc + 1 else qc))  else (if (whitespace h) then (help t qc) else (h :: help t (if h == '\\\"' then qc + 1 else qc)))"
+            },
+            "startColumn": 45,
+            "startLine": 60
+          },
+          "ruleID": "ocaml.lang.correctness.physical-vs-structural.physical-equal"
+        },
+```
+
+#### `results_by_rule_id (rule_id)`
+- Type: `array`
+- Creates a synopsis using only findings triggered by rules in the `rule_id` array
+- `rule_id` should be an array containing rule ids as such: `["ocaml.lang.correctness.physical-vs-structural.physical-equal"]`
