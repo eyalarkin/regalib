@@ -118,8 +118,8 @@ rule_list = { rule_summary |
 
 # returns the number of results returned by SAST tool that have the status
 # specified in the parameter
-status_count (status) = n {
-   arr = filter_list([], [status], [], [])
+status_count (level) = n {
+   arr = filter_list([], [level], [], [])
    n := status_count_helper(arr)
 }
 
