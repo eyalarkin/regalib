@@ -24,15 +24,15 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
 - The `input.json` file is a filter that will be placed on the sarif
    - make sure it is in the same directory as `library.rego`
    - if any category is left empty, it will not be considered
-   - `ignore` should contain 0+ strings of rule ids to be ignored
-      - if it is empty, zero rules will be ignored during evaluation
-      - if it is "all", every rule will be ignored during evaluation
    - `ruleLevel` should contain 0+ strings of a sarif finding level
       - for example, if the value is `["warning", "error"]`, the filter will only include rules of level "warning" and "error".
    - `precision` should contain 0+ strings of a sarif precision level
       - example: `["high", "very-high"]` for findings that are only of those precision levels
    - `ruleIDs` should contain 0+ strings of rule ids
       - example: `["abcd123"]` for findings only triggered by rule "abcd132"
+   - `ignore` should contain 0+ strings of rule ids to be ignored
+      - if it is empty, zero rules will be ignored during evaluation
+      - if it is "all", every rule will be ignored during evaluation
 - Take a SAST output file in a SARIF format, as a JSON
    - make sure it matches up with the title of `<output_file>` and is a .json extension
    - put it in the same directory as `library.rego` and `input.json`
