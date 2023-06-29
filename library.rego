@@ -22,7 +22,9 @@ import future.keywords.if
 import future.keywords.in
 
 default format := false
-
+default pass_by_threshold := false
+default pass_no_filters := false
+default pass := false
 
 
 filtered_runs (ids, levels, precisions, ignore) = { id |
@@ -93,10 +95,6 @@ filter_list (ids, levels, precisions, ignore) = { summary |
 
 # Library of a few rego functions that can be used for SARIF analysis.
 
-
-default pass_no_filters := false
-default pass := false
-
 # returns the total number of rules used for evaluation in the sarif
 rule_count = n {
    n := count(data.runs[0].tool.driver.rules)
@@ -160,4 +158,14 @@ pass_no_filters {
 # determines whether the SAST results pass using the 'input.json' specified filters
 pass {
    synopsis == "no problems found!"
+}
+
+pass_by_threshold (n, use_filters) {
+   use_filters == true
+   n <= count(synopsis)
+}
+
+pass_by_threshold (n, use_filters) {
+   use_filters == false
+   n <= count(filter_list([], [], [], []))
 }

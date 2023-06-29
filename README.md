@@ -49,14 +49,21 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
 #### `pass_no_filters`
 
 - Type: `boolean`
-- Determines whether or not the program scanned by the SAST tool "passes"
+- Determines whether or not the program scanned by the SAST tool passes
    - i.e. there were zero findings according every rule used by the tool
 
 #### `pass`
 
 - Type: `boolean`
-- Determines, according to the rule filters, whether or not the program scanned by the SAST tool "passes"
+- Determines, according to the rule filters, whether or not the program scanned by the SAST tool passes
    - i.e. there were zero findings according to the rules filtered by the input criteria
+
+#### `pass_by_threshold(n, use_filters)`
+
+- Type: `boolean`
+- Determines whether or not there were `n` or less findings, and passes if so
+   - if `use_filters` is true, it will only use findings complying with the filters
+   - if `use_filters` is false it will include all findings in its determination of a pass
 
 #### `rule_count`
 
