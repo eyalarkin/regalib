@@ -58,20 +58,22 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
    - i.e. there were zero findings according to the rules filtered by the input criteria
 
 #### `rule_count`
+
 - Type: `int`
 - Returns the total number of rules used for scanning present in the sarif file
    - for example: `rule_count == 4` if there were 4 rules used for scanning
 
 #### `rules_evaluated_count`
+
 - Type `int`
 - Returns the total number of findings according to the sarif file
    - for example: `rules_evaluated_count == 16` if there were 16 total findings reported by the SAST tool
 
 #### `rule_list`
+
 - Type: `array`
 - Returns an array of JSON objects where each has the id of a rule, and a description of it
    - for example: an entry in that array could look like:
-
    ```
    {
       "description": "You probably want the structural equality operator =",
@@ -80,15 +82,18 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
    ```
 
 #### `status_count(level)`
+
 - Type: `int`
 - Returns the number of results in the filtered list of findings with the finding level `level`
    - for example: `status_count("very-high")` returns the number of findings with the level `"very-high"`
 
 #### `filter_count`
+
 - Type: `int`
 - Returns the number of rules complying to the input criteria
 
 #### `synopsis`
+
 - Type: `array`
 - Returns a synopsis of the findings, after the filter is applied
 - Each entry is a JSON object as such:
@@ -112,6 +117,7 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
 ```
 
 #### `results_by_rule_id (rule_id)`
+
 - Type: `array`
 - Creates a synopsis using only findings triggered by rules in the `rule_id` array
 - `rule_id` should be an array containing rule ids as such: `["ocaml.lang.correctness.physical-vs-structural.physical-equal"]`
