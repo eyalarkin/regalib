@@ -36,9 +36,10 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
 - Take a SAST output file in a SARIF format, as a JSON
    - make sure it matches up with the title of `<output_file>` and is a .json extension
    - put it in the same directory as `library.rego` and `input.json`
-- It can be formatted however the user pleases (through  the  `--format=` flag), although some policies output better results with certain formats (will be specified)
+- It can be formatted however the user pleases (through  the  `--format=` flag), although `pretty` will be the most comprehensible
 - `<policy_name>` is the name of the policy as specified below
    - example: to run `pass_no_filters`, run `opa eval -i input.json -d <output_file>.json -d library.rego --format=pretty "data.sarif.pass_no_filters"`
+   - another example: to run `status_count(level)` with a level of `very-high`, run `opa eval -i input.json -d <output_file>.json -d library.rego --format=pretty "data.sarif.status_count("very_high")"`
 
 ---
 
