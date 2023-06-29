@@ -21,6 +21,7 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
       "ignore": []
    }
 ```
+
 - The `input.json` file is a filter that will be placed on the sarif
    - make sure it is in the same directory as `library.rego`
    - if any category is left empty, it will not be considered
@@ -74,6 +75,7 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
 - Type: `array`
 - Returns an array of JSON objects where each has the id of a rule, and a description of it
    - for example: an entry in that array could look like:
+
    ```
    {
       "description": "You probably want the structural equality operator =",
