@@ -7,6 +7,8 @@ data.json and input.json are examples of SAST output files formatted as SARIF (f
 ---
 ### How to Evaluate Each Policy
 
+Make sure you have `opa` installed in your path
+
 Put the `library.rego` and `input.json` file into the same directory that your SAST output file is in
 
 Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<policy_name>"`
