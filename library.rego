@@ -22,10 +22,9 @@ import future.keywords.if
 import future.keywords.in
 
 default format := false
-default pass_by_threshold := false
 default pass_no_filters := false
 default pass := false
-
+# default pass_by_threshold(n, use_filters) := false
 
 filtered_runs (ids, levels, precisions, ignore) = { id |
    format;
@@ -160,12 +159,31 @@ pass {
    synopsis == "no problems found!"
 }
 
-pass_by_threshold (n, use_filters) {
+pass_by_threshold_help(use_filters) := n {
    use_filters == true
-   n <= count(synopsis)
+   n := synopsis
 }
 
-pass_by_threshold (n, use_filters) {
+pass_by_threshold_help(use_filters) := n {
    use_filters == false
-   n <= count(filter_list([], [], [], []))
+   n := filter_list([], [], [], [])
 }
+
+
+default pass_by_threshold(_, _) = false
+
+pass_by_threshold_more_help(n, use_filters) = ret {
+   pass_by_threshold_help(use_filters) == "no problems found!"
+   ret := 0
+}
+
+pass_by_threshold_more_help(n, use_filters) = ret {
+   res := pass_by_threshold_help(use_filters)
+   res != "no problems found!"
+   ret := count(res)
+}
+
+pass_by_threshold(n, use_filters) {
+   pass_by_threshold_more_help(n, use_filters) <= n
+}
+
