@@ -168,10 +168,18 @@ pass_no_filters(of) {
 }
 
 # determines whether the SAST results pass using the 'input.json' specified filters
-pass(of) {
+pass(of) = true {
    synopsis(of) == "no problems found!"
-}
+} else = (count(synopsis(of)) <= input.maxAllowed)
 
+
+# summarizes findings
+# summary(of) = res {
+#    res := {
+#       "allow": pass(of),
+#       "count": filter_count(of)
+#    }
+# }
 
 # pass_by_threshold_help(use_filters) := n {
 #    use_filters == true
