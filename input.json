@@ -1,5 +1,5 @@
 {
-  "ruleLevel": ["warning"],
+  "ruleLevel": ["note"],
   "precision": [],
   "ruleIDs": [],
   "ignore": []

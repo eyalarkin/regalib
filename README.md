@@ -36,6 +36,11 @@ Run `opa eval -i input.json -d <output_file>.json -d library.rego "data.sarif.<p
    - `ignore` should contain 0+ strings of rule ids to be ignored
       - if it is empty, zero rules will be ignored during evaluation
       - if it is "all", every rule will be ignored during evaluation
+- The `of` parameter in most functions is essentially the data from your SARIF file. You can either pass the data itself, or a pointer to the data into that parameter wherever it is seen. As an example, here is what you can run from the command line to see the rule list:
+```
+opa eval "data.sarif.rule_list(data)" -i input.json -d library.rego -d results.sarif
+```
+Since we attached results.sarif to `data` using the `-d` flag, it is now stored in that variable, therefore, passing it in as a parameter would suffice as telling the functions where to grab the information from.
 - Take a SAST output file in a SARIF format, as a JSON
    - make sure it matches up with the title of `<output_file>` and is a .json extension
    - put it in the same directory as `library.rego` and `input.json`

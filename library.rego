@@ -22,13 +22,25 @@ import future.keywords.if
 import future.keywords.in
 
 default format := false
-default pass_no_filters := false
-default pass := false
+default pass_no_filters(of) := false
+default pass(of) := false
 # default pass_by_threshold(n, use_filters) := false
 
-filtered_runs (ids, levels, precisions, ignore) = { id |
+# User must pass in either a pointer to the JSON data or the data itself
+# (of the SAST tool output file)
+
+get_rules(output_file) = rules {
+   rules := output_file.runs[0].tool.driver.rules
+}
+
+get_results(output_file) = results {
+   results := output_file.runs[0].results
+}
+
+filtered_runs(ids, levels, precisions, ignore, of) = { id |
    format;
-   rule = data.runs[0].tool.driver.rules[_]
+   rules = get_rules(of)
+   rule = rules[_]
    id_check(rule.id, ids)
    # rule.id in input.ruleIDs
    level_check(rule.defaultConfiguration.level, levels)
@@ -79,9 +91,9 @@ format {
    input.ignore
 }
 
-filter_list (ids, levels, precisions, ignore) = { summary |
-   result = data.runs[0].results[_]
-   lst := filtered_runs(ids, levels, precisions, ignore)
+filter_list (ids, levels, precisions, ignore, of) = { summary |
+   result = of.runs[0].results[_]
+   lst := filtered_runs(ids, levels, precisions, ignore, of)
    result.ruleId in lst
    summary = {
       "------------------": "------------------",
@@ -90,33 +102,34 @@ filter_list (ids, levels, precisions, ignore) = { summary |
       "region": result.locations[0].physicalLocation.region,
       "message": result.message.text,
    }
-} if { count(filtered_runs(ids, levels, precisions, ignore)) > 0 } else := "no problems found!"
+} if { count(filtered_runs(ids, levels, precisions, ignore, of)) > 0 } else := "no problems found!"
 
 # Library of a few rego functions that can be used for SARIF analysis.
 
 # returns the total number of rules used for evaluation in the sarif
-rule_count = n {
-   n := count(data.runs[0].tool.driver.rules)
+rule_count(of) = n {
+   n := count(get_rules(of))
 }
 
 # returns the total evaluations returned by the tool reported in the sarif
-rules_evaluated_count = n {
-   n := count(data.runs[0].results)
+rules_evaluated_count(of) = n {
+   n := count(get_results(of))
 }
 
 # returns a quick summary of each rule used for evaluation in the sarif
-rule_list = { rule_summary |
-   rule_entry := data.runs[0].tool.driver.rules[_];
+rule_list(of) = { rule_summary |
+   rule_entry := of.runs[0].tool.driver.rules[_];
    rule_summary := {
       "id": rule_entry.id,
-      "description": rule_entry.fullDescription.text
+      "description": rule_entry.fullDescription.text,
+      "level": rule_entry.defaultConfiguration.level
    }
 }
 
 # returns the number of results returned by SAST tool that have the status
 # specified in the parameter
-status_count (level) = n {
-   arr = filter_list([], [level], [], [])
+status_count (level, of) = n {
+   arr = filter_list([], [level], [], [], of)
    n := status_count_helper(arr)
 }
 
@@ -135,55 +148,56 @@ status_count_helper (arr) = n {
 # num_warn := status_count("warning")
 
 # returns a count of the rules after applying the input filters/criteria
-filter_count = n {
-   n := count(filtered_runs(input.ruleIDs, input.ruleLevel, input.precision, input.ignore))
+filter_count(of) = n {
+   n := count(filtered_runs(input.ruleIDs, input.ruleLevel, input.precision, input.ignore, of))
 }
 
 # returns the filtered list of results from the sarif file
-synopsis = res {
-   res := filter_list(input.ruleIDs, input.ruleLevel, input.precision, input.ignore)
+synopsis(of)= res {
+   res := filter_list(input.ruleIDs, input.ruleLevel, input.precision, input.ignore, of)
 }
 
 # creates a synopsis using only rules specified in the array parameter
-results_by_rule_id (rule_id) = result {
-   result := filter_list(rule_id, [], [], [])
+results_by_rule_id(rule_id, of) = result {
+   result := filter_list(rule_id, [], [], [], of)
 }
 
 # determines whether the SAST results pass with no user-specified filters
-pass_no_filters {
-   filter_list([], [], [], []) == "no problems found!"
+pass_no_filters(of) {
+   filter_list([], [], [], [], of) == "no problems found!"
 }
 
 # determines whether the SAST results pass using the 'input.json' specified filters
-pass {
-   synopsis == "no problems found!"
-}
-
-pass_by_threshold_help(use_filters) := n {
-   use_filters == true
-   n := synopsis
-}
-
-pass_by_threshold_help(use_filters) := n {
-   use_filters == false
-   n := filter_list([], [], [], [])
+pass(of) {
+   synopsis(of) == "no problems found!"
 }
 
 
-default pass_by_threshold(_, _) = false
+# pass_by_threshold_help(use_filters) := n {
+#    use_filters == true
+#    n := synopsis
+# }
 
-pass_by_threshold_more_help(n, use_filters) = ret {
-   pass_by_threshold_help(use_filters) == "no problems found!"
-   ret := 0
-}
+# pass_by_threshold_help(use_filters) := n {
+#    use_filters == false
+#    n := filter_list([], [], [], [])
+# }
 
-pass_by_threshold_more_help(n, use_filters) = ret {
-   res := pass_by_threshold_help(use_filters)
-   res != "no problems found!"
-   ret := count(res)
-}
 
-pass_by_threshold(n, use_filters) {
-   pass_by_threshold_more_help(n, use_filters) <= n
-}
+# default pass_by_threshold(_, _) = false
+
+# pass_by_threshold_more_help(n, use_filters) = ret {
+#    pass_by_threshold_help(use_filters) == "no problems found!"
+#    ret := 0
+# }
+
+# pass_by_threshold_more_help(n, use_filters) = ret {
+#    res := pass_by_threshold_help(use_filters)
+#    res != "no problems found!"
+#    ret := count(res)
+# }
+
+# pass_by_threshold(n, use_filters) {
+#    pass_by_threshold_more_help(n, use_filters) <= n
+# }
 
