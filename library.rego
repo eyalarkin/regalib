@@ -15,6 +15,11 @@
 #
 # A line of "------------" marks the start of a new finding summary
 
+# The config JSON object defined in the beginning of this file is synonymous to
+# the JSON object found in input.json. Initially, that was used at the input
+# criteria for these functions. Now, we use the config JSON object defined in
+# in this library.
+
 
 package sarif
 
@@ -29,6 +34,14 @@ default pass(of) := false
 # User must pass in either a pointer to the JSON data or the data itself
 # (of the SAST tool output file)
 
+config := {
+   "ruleLevel": ["note"],
+   "precision": [],
+   "ruleIDs": [],
+   "ignore": [],
+   "maxAllowed": 10
+}
+
 get_rules(output_file) = rules {
    rules := output_file.runs[0].tool.driver.rules
 }
@@ -42,13 +55,13 @@ filtered_runs(ids, levels, precisions, ignore, of) = { id |
    rules = get_rules(of)
    rule = rules[_]
    id_check(rule.id, ids)
-   # rule.id in input.ruleIDs
+   # rule.id in config.ruleIDs
    level_check(rule.defaultConfiguration.level, levels)
-   # rule.defaultConfiguration.level in input.ruleLevel;
+   # rule.defaultConfiguration.level in config.ruleLevel;
    precision_check(rule.properties.precision, precisions)
-   # rule.properties.precision in input.precision;
+   # rule.properties.precision in config.precision;
    ignore_check(rule.id, ignore)
-   # not (rule.id in input.ignore);
+   # not (rule.id in config.ignore);
    id = rule.id
 } if { not (ignore == "all") } else := []
 
@@ -85,10 +98,10 @@ ignore_check (ignore, filters) {
 }
 
 format {
-   input.ruleLevel
-   input.precision
-   input.ruleIDs
-   input.ignore
+   config.ruleLevel
+   config.precision
+   config.ruleIDs
+   config.ignore
 }
 
 filter_list (ids, levels, precisions, ignore, of) = { summary |
@@ -147,14 +160,14 @@ status_count_helper (arr) = n {
 
 # num_warn := status_count("warning")
 
-# returns a count of the rules after applying the input filters/criteria
+# returns a count of the rules after applying the config filters/criteria
 filter_count(of) = n {
-   n := count(filtered_runs(input.ruleIDs, input.ruleLevel, input.precision, input.ignore, of))
+   n := count(filtered_runs(config.ruleIDs, config.ruleLevel, config.precision, config.ignore, of))
 }
 
 # returns the filtered list of results from the sarif file
 synopsis(of)= res {
-   res := filter_list(input.ruleIDs, input.ruleLevel, input.precision, input.ignore, of)
+   res := filter_list(config.ruleIDs, config.ruleLevel, config.precision, config.ignore, of)
 }
 
 # creates a synopsis using only rules specified in the array parameter
@@ -170,7 +183,7 @@ pass_no_filters(of) {
 # determines whether the SAST results pass using the 'input.json' specified filters
 pass(of) = true {
    synopsis(of) == "no problems found!"
-} else = (count(synopsis(of)) <= input.maxAllowed)
+} else = (count(synopsis(of)) <= config.maxAllowed)
 
 
 # summarizes findings
