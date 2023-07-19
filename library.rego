@@ -25,10 +25,12 @@ package sarif
 
 import future.keywords.if
 import future.keywords.in
+import data.runs as info
 
 default format := false
 default pass_no_filters(of) := false
 default pass(of) := false
+default indeed := false
 # default pass_by_threshold(n, use_filters) := false
 
 # User must pass in either a pointer to the JSON data or the data itself
@@ -40,6 +42,10 @@ config := {
    "ruleIDs": [],
    "ignore": [],
    "maxAllowed": 10
+}
+
+indeed {
+   count(info[0].tool.driver.rules) > 0
 }
 
 get_rules(output_file) = rules {
