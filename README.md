@@ -1,8 +1,10 @@
 # Rego Functions for SARIF
 
-rego code for verifying policies on SARIF and related formats (generic attestations such as SAST, DAST etc.)
+Rego code for verifying policies on SARIF and related formats (generic attestations such as SAST, DAST etc.)
 
-data.json and input.json are examples of SAST output files formatted as SARIF (for input to program) and criteria/filter input, respectively
+`data.json` and `input.json` are examples of SAST output files formatted as SARIF (for input to program) and criteria/filter input, respectively
+
+`input.json` is no longer used as criteria/filter input. Please use the config JSON object defined in `library.rego` as explained below. The format is the same as in `input.json`
 
 ---
 ### How to Evaluate Each Policy
